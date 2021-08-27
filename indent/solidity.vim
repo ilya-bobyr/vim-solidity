@@ -31,13 +31,13 @@ set cpo&vim
 let s:js_keywords = '^\s*\(break\|case\|catch\|continue\|debugger\|default\|delete\|do\|else\|finally\|for\|function\|if\|in\|instanceof\|new\|return\|switch\|this\|throw\|try\|typeof\|var\|void\|while\|with\)'
 
 " Regex of syntax group names that are or delimit string or are comments.
-let s:syng_strcom = 'string\|regex\|comment\c'
+let s:syng_strcom = 'string\|regex\|comment\|natspec\c'
 
 " Regex of syntax group names that are strings.
 let s:syng_string = 'regex\c'
 
 " Regex of syntax group names that are strings or documentation.
-let s:syng_multiline = 'comment\|natspecblock\c'
+let s:syng_multiline = 'comment\|natspec\c'
 
 " Regex of syntax group names that are line comment.
 let s:syng_linecom = 'linecomment\c'
