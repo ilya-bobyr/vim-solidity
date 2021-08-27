@@ -100,7 +100,7 @@ syn match     solFuncName         contained nextgroup=solFuncParam skipwhite ski
       \ '\v<[a-zA-Z_][0-9a-zA-Z_]*'
 syn region    solFuncParam
       \ contained
-      \ contains=solComma,solValueType,solFuncStorageType
+      \ contains=solComma,solValueType,solFuncStorageType,solComment
       \ nextgroup=solFuncModCustom,solFuncModifier,solFuncReturn,solFuncBody
       \ skipempty
       \ skipwhite
@@ -144,12 +144,14 @@ hi def link   solCallOptionKey    Define
 
 " Modifiers
 syn keyword   solModifier         modifier nextgroup=solModifiername skipwhite
+syn keyword   solModifierOverride contained nextgroup=solModifierBody skipwhite skipempty override virtual
 syn match     solModifierName     /\<[a-zA-Z_][0-9a-zA-Z_]*/ contained nextgroup=solModifierParam skipwhite
-syn region    solModifierParam    start='(' end=')' contained contains=solComma,solValueType,solFuncStorageType nextgroup=solModifierBody skipwhite skipempty
+syn region    solModifierParam    start='(' end=')' contained contains=solComma,solValueType,solFuncStorageType nextgroup=solModifierOverride,solModifierBody skipwhite skipempty
 syn region    solModifierBody     start='{' end='}' contained contains=solDestructure,solComment,solAssemblyBlock,solEmitEvent,solTypeCast,solMethod,solValueType,solConstant,solKeyword,solRepeat,solLabel,solException,solStructure,solFuncStorageType,solOperator,solNumber,solString,solFuncCall,solIf,solElse,solLoop,solModifierInsert skipempty skipwhite transparent
 syn match     solModifierInsert   /\<_\>/ containedin=solModifierBody
 
 hi def link   solModifier         Define
+hi def link   solModifierOverride Keyword
 hi def link   solModifierName     Function
 hi def link   solModifierInsert   Function
 
@@ -193,9 +195,9 @@ syn keyword   solConstant         block msg now tx this abi
 
 hi def link   solConstant         Constant
 
-" TODO: add syntax for 'override' and 'abstract' 'try' 'immutable'
-" Reserved keywords https://solidity.readthedocs.io/en/v0.5.7/miscellaneous.html#reserved-keywords
-syn keyword   solReserved         after alias apply auto case catch copyof default
+" TODO: add syntax for 'try' 'catch'
+" Reserved keywords https://docs.soliditylang.org/en/v0.8.1/cheatsheet.html#reserved-keywords
+syn keyword   solReserved         after alias apply auto case copyof default
 syn keyword   solReserved         define final implements in inline let macro match
 syn keyword   solReserved         mutable null of partial promise reference relocatable
 syn keyword   solReserved         sealed sizeof static supports switch typedef typeof unchecked
@@ -295,7 +297,6 @@ syn region    solIfBlock          start=/{/ end=/}/ contained nextgroup=solElse 
 
 hi def link   solIf               Keyword
 hi def link   solElse             Keyword
-
 " Loops
 syn match     solLoop             /\(\<for\>\|\<while\>\)/ contained skipwhite skipempty nextgroup=solLoopParens
 syn region    solLoopParens       start=/(/ end=/)/ contained nextgroup=solLoopBlock skipwhite skipempty transparent
