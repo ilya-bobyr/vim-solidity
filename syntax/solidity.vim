@@ -22,11 +22,11 @@ syn keyword   solFuncStorageType  contained
 syn keyword   solPayableType  contained
       \ payable
 
-hi def link   solStorageType      Keyword
-hi def link   solFuncStorageType  Keyword
-hi def link   solStorageConst     Keyword
-hi def link   solStorageImmutable Keyword
-hi def link   solPayableType      Keyword
+hi def link   solStorageType      StorageClass
+hi def link   solFuncStorageType  StorageClass
+hi def link   solStorageConst     StorageClass
+hi def link   solStorageImmutable StorageClass
+hi def link   solPayableType      StorageClass
 
 " Common Groups Highlighting
 hi def link   solParens           Normal
@@ -166,7 +166,7 @@ syn match     solLibName          /[a-zA-Z_][0-9a-zA-Z_]*\s*\zefor/ contained
 
 hi def link   solAbstract         Special
 hi def link   solContract         Define
-hi def link   solContractName     Function
+hi def link   solContractName     Type
 hi def link   solInheritor        Keyword
 hi def link   solLibUsing         Special
 hi def link   solLibName          Type
