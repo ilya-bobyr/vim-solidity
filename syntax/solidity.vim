@@ -122,7 +122,7 @@ syn region    solFuncBody         contained contains=solDestructure,solComment,s
       \ start='{'
       \ end='}'
 syn match     solFuncCall         contained skipempty skipwhite nextgroup=solCallOptions,solFuncCallParens
-      \ '\v%(%(<if>|<uint>|<int>|<ufixed>|<bytes>|<address>|<string>|<bool>)\s*)@<!<[a-zA-Z_][0-9a-zA-Z_]*\s*%((\{[^}]*\})?\s*\()@='
+      \ '\v%(<%(if|uint|int|ufixed|bytes|address|string|bool)>)@!<[a-zA-Z_][0-9a-zA-Z_]*\s*[{)]@='
 syn region    solFuncCallParens   contained transparent contains=solComment,solString,solFuncCall,solConstant,solNumber,solMethod,solTypeCast,solComma,solOperator
       \ start='('
       \ end=')'
@@ -175,7 +175,7 @@ hi def link   solLibName          Type
 syn match     solEvent            /\<event\>/ nextgroup=solEventName,solEventParams skipwhite
 syn match     solEventName        /\<[a-zA-Z_][0-9a-zA-Z_]*/ nextgroup=solEventParam contained skipwhite
 syn region    solEventParam       start='(' end=')' contains=solComma,solValueType,solEventParamMod,other contained skipwhite skipempty
-syn match     solEventParamMod    /\(\<indexed\>\|\<anonymous\>\)/ contained
+syn match     solEventParamMod    /\<\%(indexed\|anonymous\)\>/ contained
 syn keyword   solEmitEvent        emit
 
 hi def link   solEvent            Define
@@ -206,9 +206,9 @@ hi def link   solReserved         Error
 
 " Pragma
 syn keyword   solPragma           pragma
-syn match     solPragmaVersion    /\(pragma\s*\)\@<=\<solidity\>/
-syn match     solPragmaExp        /\(pragma\s*\)\@<=\<experimental\s*\(ABIEncoderV2\|SMTChecker\)\>/
-syn match     solPragmaABICoder   /\(pragma\s*\)\@<=\<abicoder\s*\(v1\|v2\)\>/
+syn match     solPragmaVersion    /\%(\<pragma\s\+\)\@<=solidity\>/
+syn match     solPragmaExp        /\%(\<pragma\s\+\)\@<=experimental\s*\%(ABIEncoderV2\|SMTChecker\)\>/
+syn match     solPragmaABICoder   /\%(\<pragma\s\+\)\@<=abicoder\s*v[12]\>/
 
 hi def link   solPragma           PreProc
 hi def link   solPragmaVersion    PreProc
@@ -218,7 +218,7 @@ hi def link   solPragmaABICoder   PreProc
 " Assembly
 syn keyword   solAssemblyName     assembly  contained
 syn region    solAssemblyBlock    start=/\<assembly\s*{/ end=/}/ contained contains=solAssemblyName,solAssemblyLet,solAssemblyOperator,solAssemblyConst,solAssemblyMethod,solComment,solNumber,solString,solOperator,solAssemblyCond,solAssmNestedBlock
-syn match     solAssemblyOperator /\(:=\)/ contained
+syn match     solAssemblyOperator /:=/ contained
 syn keyword   solAssemblyLet      let contained
 syn keyword   solAssemblyMethod   stop add sub mul div sdiv mod smod exp not lt gt slt sgt eq iszero contained
 syn keyword   solAssemblyMethod   and or xor byte shl shr sar addmod mulmod signextend keccak256 jump contained
@@ -226,11 +226,11 @@ syn keyword   solAssemblyMethod   jumpi pop mload mstore mstore8 sload sstore ca
 syn keyword   solAssemblyMethod   codecopy extcodesize extcodecopy returndatacopy extcodehash create create2 contained
 syn keyword   solAssemblyMethod   call callcode delegatecall staticcall return revert selfdestruct contained
 syn keyword   solAssemblyMethod   log0 log1 log2 log3 log4 blockhash contained
-syn match     solAssemblyMethod   /\<\(swap\|dup\)\d\>/ contained
+syn match     solAssemblyMethod   /\<\%(swap\|dup\)\d\>/ contained
 syn keyword   solAssemblyConst    pc msize gas address caller callvalue calldatasize codesize contained
 syn keyword   solAssemblyConst    returndatasize origin gasprice coinbase timestamp number difficulty gaslimit contained
 syn keyword   solAssemblyCond     if else contained
-syn region    solAssmNestedBlock  start=/\(assembly\s*\)\@<!{/ end=/}/ contained skipwhite skipempty transparent
+syn region    solAssmNestedBlock  start=/\%(assembly\s*\)\@<!{/ end=/}/ contained skipwhite skipempty transparent
 
 hi def link   solAssemblyBlock    PreProc
 hi def link   solAssemblyName     Special
@@ -273,7 +273,7 @@ syn match     solValueType        /\<int\d*\s*\[\]/ nextgroup=solStorageType,sol
 syn match     solValueType        /\<fixed\d*\s*\[\]/ nextgroup=solStorageType,solStorageConst,solStorageImmutable skipwhite skipempty
 syn match     solValueType        /\<ufixed\d*\s*\[\]/ nextgroup=solStorageType,solStorageConst,solStorageImmutable skipwhite skipempty
 syn match     solValueType        /\<bytes\d*\s*\[\]/ nextgroup=solStorageType,solStorageConst,solStorageImmutable skipwhite skipempty
-syn match     solValueType        /\<address\s*\(payable\)*\s*\[\]/ contains=solPayableType nextgroup=solStorageType,solStorageConst,solStorageImmutable skipwhite skipempty
+syn match     solValueType        /\<address\%(\s\+payable\)\?\s*\[\]/ contains=solPayableType nextgroup=solStorageType,solStorageConst,solStorageImmutable skipwhite skipempty
 syn match     solValueType        /\<string\s*\[\]/ nextgroup=solStorageType,solStorageConst,solStorageImmutable skipwhite skipempty
 syn match     solValueType        /bool\s*\[\]/ nextgroup=solStorageType,solStorageConst,solStorageImmutable skipwhite skipempty
 
@@ -298,7 +298,7 @@ syn region    solIfBlock          start=/{/ end=/}/ contained nextgroup=solElse 
 hi def link   solIf               Keyword
 hi def link   solElse             Keyword
 " Loops
-syn match     solLoop             /\(\<for\>\|\<while\>\)/ contained skipwhite skipempty nextgroup=solLoopParens
+syn match     solLoop             /\<\%(for\|while\)\>/ contained skipwhite skipempty nextgroup=solLoopParens
 syn region    solLoopParens       start=/(/ end=/)/ contained nextgroup=solLoopBlock skipwhite skipempty transparent
 syn region    solLoopBlock        start=/{/ end=/}/ contained skipwhite skipempty transparent
 
@@ -319,7 +319,7 @@ syn match     solNatspecTag       /@author\>/ contained
 syn match     solNatspecTag       /@notice\>/ contained
 syn match     solNatspecTag       /@dev\>/ contained
 syn match     solNatspecTag       /@param\>/ contained
-syn match     solNatspecParam     /\%(@param\s*\)\@<=\<[a-zA-Z_][0-9a-zA-Z_]*/
+syn match     solNatspecParam     /\%(@param\s\+\)\@<=[a-zA-Z_][0-9a-zA-Z_]*/
 syn match     solNatspecTag       /@return\>/ contained
 syn match     solNatspecTag       /@inheritdoc\>/ contained
 syn match     solNatspecTag       /@custom:\k*\>/ contained
