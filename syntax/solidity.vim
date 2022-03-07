@@ -442,6 +442,7 @@ syn match     solNatspecTag       /@notice\>/ contained
 syn match     solNatspecTag       /@dev\>/ contained
 syn match     solNatspecTag       /@param\>/ contained
 syn match     solNatspecParam     /\%(@param\s\+\)\@<=[a-zA-Z_][0-9a-zA-Z_]*/
+syn match     solNatspecParam     /\%(@return\s\+\)\@<=\<[a-zA-Z_][0-9a-zA-Z_]*/
 syn match     solNatspecTag       /@return\>/ contained
 syn match     solNatspecTag       /@inheritdoc\>/ contained
 syn match     solNatspecTag       /@custom:\k*\>/ contained
