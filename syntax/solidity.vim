@@ -130,9 +130,15 @@ syn region    solFuncBody         contained  skipempty skipwhite
       \ contains=@solFuncBodyList
       \ start='{'
       \ end='}'
-syn match     solFuncCall         contained skipempty skipwhite nextgroup=solCallOptions,solFuncCallParens
-      \ '\v%(<%(if|uint|int|ufixed|bytes|address|string|bool)>)@!<[a-zA-Z_][0-9a-zA-Z_]*\s*[{)]@='
-syn region    solFuncCallParens   contained transparent contains=solComment,solString,solFuncCall,solConstant,solNumber,solMethod,solTypeCast,solComma,solOperator
+syn match     solFuncCall         contained skipempty skipwhite
+      \ nextgroup=solCallOptions,solFuncCallArgs
+      \ '\v<%(%(address|bool|bytes|catch|if|int|string|try|ufixed|uint)>)@![a-zA-Z_][0-9a-zA-Z_]*%(\s*[{)])@='
+" Function call arguments.
+" Syntax elements that can be part of a function call argument list.
+syn cluster solFuncCallArgsList
+      \ contains=solComment,solString,solFuncCall,solConstant,solNumber,solMethod,solTypeCast,solComma,solOperator
+syn region    solFuncCallArgs     contained transparent
+      \ contains=@solFuncCallArgsList
       \ start='('
       \ end=')'
 
@@ -146,7 +152,9 @@ hi def link   solFuncModCustom    Keyword
 hi def link   solFuncCall         Function
 hi def link   solFuncReturn       Special
 
-syn region    solCallOptions      start=/{/ end=/}/ contained contains=solString,solFuncCall,solConstant,solNumber,solMethod,solTypeCast,solComma,solOperator,solCallOptionKey transparent nextgroup=solFuncCallParens
+syn region    solCallOptions      start=/{/ end=/}/ contained
+      \ contains=solString,solFuncCall,solConstant,solNumber,solMethod,solTypeCast,solComma,solOperator,solCallOptionKey
+      \ transparent nextgroup=solFuncCallArgs
 syn keyword   solCallOptionKey    gas value
 
 hi def link   solCallOptionKey    Define
