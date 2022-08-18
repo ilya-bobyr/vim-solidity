@@ -118,7 +118,16 @@ syn keyword   solFuncReturn       contained nextgroup=solFuncRetParens skipwhite
 syn region    solFuncRetParens    contains=solValueType,solFuncStorageType nextgroup=solFuncBody skipempty skipwhite
       \ start='('
       \ end=')'
-syn region    solFuncBody         contained contains=solDestructure,solComment,solAssemblyBlock,solEmitEvent,solTypeCast,solMethod,solValueType,solConstant,solKeyword,solRepeat,solLabel,solException,solStructure,solFuncStorageType,solOperator,solNumber,solString,solFuncCall,solIf,solElse,solLoop skipempty skipwhite
+" Function body level constructs.
+" Syntax elements that can be present inside of a function body.  Some of
+" them need to reference back to this full list as a contained item.  For
+" example, both branches of an "if" statement may contain any of the other
+" syntax elements that can be preset in a function body.  Including, for
+" example, nested "if" statements.
+syn cluster solFuncBodyList
+      \ contains=solDestructure,solComment,solAssemblyBlock,solEmitEvent,solTypeCast,solMethod,solValueType,solConstant,solKeyword,solRepeat,solLabel,solException,solStructure,solFuncStorageType,solOperator,solNumber,solString,solFuncCall,solIf,solElse,solLoop
+syn region    solFuncBody         contained  skipempty skipwhite
+      \ contains=@solFuncBodyList
       \ start='{'
       \ end='}'
 syn match     solFuncCall         contained skipempty skipwhite nextgroup=solCallOptions,solFuncCallParens
@@ -293,14 +302,19 @@ hi def link   solTypeCast         Type
 syn match     solIf               /\<if\>/ contained skipwhite skipempty nextgroup=solIfParens
 syn match     solElse             /\<else\>/ contained skipwhite skipempty nextgroup=solIf,solIfBlock
 syn region    solIfParens         start=/(/ end=/)/ contained nextgroup=solIfBlock skipwhite skipempty transparent
-syn region    solIfBlock          start=/{/ end=/}/ contained nextgroup=solElse skipwhite skipempty transparent
+syn region    solIfBlock          start=/{/ end=/}/ contained
+      \ contains=@solFuncBodyList
+      \ nextgroup=solElse skipwhite skipempty transparent
 
 hi def link   solIf               Keyword
 hi def link   solElse             Keyword
+
 " Loops
 syn match     solLoop             /\<\%(for\|while\)\>/ contained skipwhite skipempty nextgroup=solLoopParens
 syn region    solLoopParens       start=/(/ end=/)/ contained nextgroup=solLoopBlock skipwhite skipempty transparent
-syn region    solLoopBlock        start=/{/ end=/}/ contained skipwhite skipempty transparent
+syn region    solLoopBlock        start=/{/ end=/}/ contained
+      \ contains=@solFuncBodyList
+      \ skipwhite skipempty transparent
 
 hi def link   solLoop             Keyword
 
