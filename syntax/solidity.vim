@@ -98,9 +98,12 @@ syn keyword   solReceive          nextgroup=solFuncParam skipwhite skipempty
       \ receive
 syn match     solFuncName         contained nextgroup=solFuncParam skipwhite skipempty
       \ '\v<[a-zA-Z_][0-9a-zA-Z_]*'
+" Function definition parameter list contents.
+syn cluster   solFuncParamList
+      \ contains=solComma,solValueType,solFuncStorageType,solComment
 syn region    solFuncParam
       \ contained
-      \ contains=solComma,solValueType,solFuncStorageType,solComment
+      \ contains=@solFuncParamList
       \ nextgroup=solFuncModCustom,solFuncModifier,solFuncReturn,solFuncBody
       \ skipempty
       \ skipwhite
@@ -125,7 +128,7 @@ syn region    solFuncRetParens    contains=solValueType,solFuncStorageType nextg
 " syntax elements that can be preset in a function body.  Including, for
 " example, nested "if" statements.
 syn cluster solFuncBodyList
-      \ contains=solDestructure,solComment,solAssemblyBlock,solEmitEvent,solTypeCast,solMethod,solValueType,solConstant,solKeyword,solRepeat,solLabel,solException,solStructure,solFuncStorageType,solOperator,solNumber,solString,solFuncCall,solIf,solElse,solLoop
+      \ contains=solDestructure,solComment,solAssemblyBlock,solEmitEvent,solTypeCast,solMethod,solValueType,solConstant,solKeyword,solRepeat,solLabel,solException,solStructure,solFuncStorageType,solOperator,solNumber,solString,solFuncCall,solIf,solElse,solLoop,solTry
 syn region    solFuncBody         contained  skipempty skipwhite
       \ contains=@solFuncBodyList
       \ start='{'
@@ -164,7 +167,7 @@ syn keyword   solModifier         modifier nextgroup=solModifiername skipwhite
 syn keyword   solModifierOverride contained nextgroup=solModifierBody skipwhite skipempty override virtual
 syn match     solModifierName     /\<[a-zA-Z_][0-9a-zA-Z_]*/ contained nextgroup=solModifierParam skipwhite
 syn region    solModifierParam    start='(' end=')' contained contains=solComma,solValueType,solFuncStorageType nextgroup=solModifierOverride,solModifierBody skipwhite skipempty
-syn region    solModifierBody     start='{' end='}' contained contains=solDestructure,solComment,solAssemblyBlock,solEmitEvent,solTypeCast,solMethod,solValueType,solConstant,solKeyword,solRepeat,solLabel,solException,solStructure,solFuncStorageType,solOperator,solNumber,solString,solFuncCall,solIf,solElse,solLoop,solModifierInsert skipempty skipwhite transparent
+syn region    solModifierBody     start='{' end='}' contained contains=solDestructure,solComment,solAssemblyBlock,solEmitEvent,solTypeCast,solMethod,solValueType,solConstant,solKeyword,solRepeat,solLabel,solException,solStructure,solFuncStorageType,solOperator,solNumber,solString,solFuncCall,solIf,solElse,solLoop,solTry,solModifierInsert skipempty skipwhite transparent
 syn match     solModifierInsert   /\<_\>/ containedin=solModifierBody
 
 hi def link   solModifier         Define
@@ -212,7 +215,6 @@ syn keyword   solConstant         block msg now tx this abi
 
 hi def link   solConstant         Constant
 
-" TODO: add syntax for 'try' 'catch'
 " Reserved keywords https://docs.soliditylang.org/en/v0.8.1/cheatsheet.html#reserved-keywords
 syn keyword   solReserved         after alias apply auto case copyof default
 syn keyword   solReserved         define final implements in inline let macro match
@@ -325,6 +327,74 @@ syn region    solLoopBlock        start=/{/ end=/}/ contained
       \ skipwhite skipempty transparent
 
 hi def link   solLoop             Keyword
+
+" Try/catch
+syn match solTry                  /\<try\>/ contained
+      \ skipwhite skipempty nextgroup=solTryCallExpr
+syn region solTryCallExpr         contained
+      \ contains=@solFuncCallArgsList
+      \ start='[^({]*('
+      \ end=')'
+      \ skipwhite skipempty nextgroup=solTryReturns,@solTryCatchList
+" TODO: 'he' does not seem to have any effect here :(
+" Would probably need to rewrite is a set of rules, in order to avoid
+" "(" being highlighted.
+syn region solTryReturns          contained
+      \ contains=@solFuncParamList
+      \ matchgroup=solCatchKeyword start='returns\_s\+('he=s+6
+      \ matchgroup=NONE
+      \ end=')'
+      \ skipwhite skipempty nextgroup=solTrySuccessBlock
+syn region solTrySuccessBlock     contained
+      \ contains=@solFuncBodyList
+      \ start='{'
+      \ end='}'
+      \ skipwhite skipempty nextgroup=@solTryCatchList
+syn cluster solTryCatchList
+      \ contains=solTryCatchError,solTryCatchPanic,solTryCatchLowLevel,solTryCatchAny
+" TODO: 'he' does not seem to have any effect here :(
+" Would probably need to rewrite is a set of rules, in order to avoid
+" everything after "catch" to be highlighted.  Might not be such a
+" bad idea, as currently this rule matches only if the error pattern
+" is fully matched.  And matching in the error pattern is
+" non-standard, thus has no highlight.
+syn region solTryCatchError      contained
+      \ contains=@solFuncBodyList
+      \ matchgroup=solCatchKeyword
+      \ start='catch\_s\+Error\_s*(\_s*string\_s\+memory\_s\+\k\+\_s*)\_s*{'he=s+5
+      \ matchgroup=NONE
+      \ end='}'
+      \ skipwhite skipempty nextgroup=@solTryCatchList
+" TODO: 'he' does not seem to have any effect here :(
+" See "solTryCatchError" above.
+syn region solTryCatchPanic      contained
+      \ contains=@solFuncBodyList
+      \ matchgroup=solCatchKeyword
+      \ start='catch\_s\+Panic\_s*(\_s*uint\_s\+\k\+\_s*)\_s*{'he=s+5
+      \ matchgroup=NONE
+      \ end='}'
+      \ skipwhite skipempty nextgroup=@solTryCatchList
+" TODO: 'he' does not seem to have any effect here :(
+" See "solTryCatchError" above.
+syn region solTryCatchLowLevel   contained
+      \ contains=@solFuncBodyList
+      \ matchgroup=solCatchKeyword
+      \ start='catch\_s*(\_s*bytes\_s\+memory\_s\+\k\+\_s*)\_s*{'he=s+5
+      \ matchgroup=NONE
+      \ end='}'
+      \ skipwhite skipempty nextgroup=@solTryCatchList
+" TODO: 'he' does not seem to have any effect here :(
+" See "solTryCatchError" above.
+syn region solTryCatchAny        contained
+      \ contains=@solFuncBodyList
+      \ matchgroup=solCatchKeyword
+      \ start='catch\_s*{'he=s+5
+      \ matchgroup=NONE
+      \ end='}'
+      \ skipwhite skipempty nextgroup=@solTryCatchList
+
+hi def link solTry                Keyword
+hi def link solCatchKeyword       Keyword
 
 
 " Comments
