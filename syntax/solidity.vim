@@ -100,7 +100,7 @@ syn match     solFuncName         contained nextgroup=solFuncParam skipwhite ski
       \ '\v<[a-zA-Z_][0-9a-zA-Z_]*'
 " Function definition parameter list contents.
 syn cluster   solFuncParamList
-      \ contains=solComma,solValueType,solFuncStorageType,solComment
+      \ contains=solComma,solValueType,solMapping,solFuncStorageType,solComment
 syn region    solFuncParam
       \ contained
       \ contains=@solFuncParamList
