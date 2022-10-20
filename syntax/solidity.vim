@@ -128,7 +128,7 @@ syn region    solFuncRetParens    contains=solValueType,solFuncStorageType nextg
 " syntax elements that can be preset in a function body.  Including, for
 " example, nested "if" statements.
 syn cluster solFuncBodyList
-      \ contains=solDestructure,solComment,solAssemblyBlock,solEmitEvent,solTypeCast,solMethod,solValueType,solConstant,solKeyword,solRepeat,solLabel,solException,solStructure,solFuncStorageType,solOperator,solNumber,solString,solFuncCall,solIf,solElse,solLoop,solTry
+      \ contains=solDestructure,solComment,solAssemblyBlock,solEmitEvent,solTypeCast,solMethod,solValueType,solConstant,solKeyword,solRepeat,solLabel,solException,solStructure,solFuncStorageType,solOperator,solNumber,solString,solFuncCall,solIf,solElse,solLoop,solTry,solUnchecked
 syn region    solFuncBody         contained  skipempty skipwhite
       \ contains=@solFuncBodyList
       \ start='{'
@@ -167,7 +167,7 @@ syn keyword   solModifier         modifier nextgroup=solModifiername skipwhite
 syn keyword   solModifierOverride contained nextgroup=solModifierBody skipwhite skipempty override virtual
 syn match     solModifierName     /\<[a-zA-Z_][0-9a-zA-Z_]*/ contained nextgroup=solModifierParam skipwhite
 syn region    solModifierParam    start='(' end=')' contained contains=solComma,solValueType,solFuncStorageType nextgroup=solModifierOverride,solModifierBody skipwhite skipempty
-syn region    solModifierBody     start='{' end='}' contained contains=solDestructure,solComment,solAssemblyBlock,solEmitEvent,solTypeCast,solMethod,solValueType,solConstant,solKeyword,solRepeat,solLabel,solException,solStructure,solFuncStorageType,solOperator,solNumber,solString,solFuncCall,solIf,solElse,solLoop,solTry,solModifierInsert skipempty skipwhite transparent
+syn region    solModifierBody     start='{' end='}' contained contains=solDestructure,solComment,solAssemblyBlock,solEmitEvent,solTypeCast,solMethod,solValueType,solConstant,solKeyword,solRepeat,solLabel,solException,solStructure,solFuncStorageType,solOperator,solNumber,solString,solFuncCall,solIf,solElse,solLoop,solTry,solUnchecked,solModifierInsert skipempty skipwhite transparent
 syn match     solModifierInsert   /\<_\>/ containedin=solModifierBody
 
 hi def link   solModifier         Define
@@ -219,7 +219,7 @@ hi def link   solConstant         Constant
 syn keyword   solReserved         after alias apply auto case copyof default
 syn keyword   solReserved         define final implements in inline let macro match
 syn keyword   solReserved         mutable null of partial promise reference relocatable
-syn keyword   solReserved         sealed sizeof static supports switch typedef typeof unchecked
+syn keyword   solReserved         sealed sizeof static supports switch typedef typeof
 
 hi def link   solReserved         Error
 
@@ -395,6 +395,15 @@ syn region solTryCatchAny        contained
 
 hi def link solTry                Keyword
 hi def link solCatchKeyword       Keyword
+
+" unchecked
+syn match   solUnchecked          /\<unchecked\>/ contained
+      \ skipwhite skipempty nextgroup=solUncheckedBlock
+syn region  solUncheckedBlock     start=/{/ end=/}/ contained
+      \ contains=@solFuncBodyList
+      \ skipwhite skipempty transparent
+
+hi def link solUnchecked          Keyword
 
 
 " Comments
