@@ -42,8 +42,6 @@ syn region    solEnumBody         start='(' end=')' contained contains=solComma,
 syn keyword   solStruct           nextgroup=solStructBody skipempty skipwhite
       \ struct
 syn region    solStructBody       start='{' end='}' contained contains=solComma,solValueType,solStruct,solEnum,solMapping
-syn match     solCustomType       skipempty skipwhite nextgroup=solStorageType,solStorageConst,solStorageImmutable
-      \ '\v[a-zA-Z_][a-zA-Z0-9_]*\s*'
 
 hi def link   solMapping          Define
 hi def link   solEnum             Define
