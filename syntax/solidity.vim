@@ -7,7 +7,9 @@ if exists("b:current_syntax")
   finish
 endif
 
-syn sync minlines=50
+" Long comments may confuse the syntax parser.  And it does not seem that this
+" syntax is too expensive to parse.
+syn sync fromstart
 
 " Common Groups
 syn match     solComma            ','
