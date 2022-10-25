@@ -201,7 +201,7 @@ syn keyword   solEmitEvent        emit
 hi def link   solEvent            Define
 hi def link   solEventName        Function
 hi def link   solEventParamMod    Keyword
-hi def link   solEmitEvent        Special
+hi def link   solEmitEvent        Keyword
 
 " Errors
 syn match     solError            /\<error\>/ nextgroup=solErrorName,solFuncParams skipwhite
