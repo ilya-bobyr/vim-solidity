@@ -408,10 +408,31 @@ hi def link solUnchecked          Keyword
 
 " Comments
 syn keyword   solTodo             TODO FIXME XXX TBD contained
-syn region    solComment          start=/\/\// end=/$/ contains=solTodo,@Spell
-syn region    solComment          start=/\/\*/ end=/\*\// contains=solTodo,@Spell
+
+" Extra highlighting in the comments.
+" This should probably be configurable, but I like it, so the default is "on".
+"
+" Highlight numbers in the comments.  They often have certain meaning.
+" Allow underscores, to separate thousands, or for other kinds of grouping.
+" Allow commas for grouping, but only for decimals.
+syn match     solCommentNumber    /\v\c<%(\d|[,_])+%(\.\d+)=%(e[+-]=\d+)=>/ contained
+syn match     solCommentNumber    /\v\c<0b[01_]+>/ contained
+syn match     solCommentNumber    /\v\c<0o%(\o|_)+>/ contained
+syn match     solCommentNumber    /\v\c<0x%(\x|_)+>/ contained
+" A backtick quoted expression is the comments is highlighted, to show that it
+" is a block of code, an identifier, etc.
+syn region    solCommentLiteral   start=/`/ end=/`/ contained
+
+syn region    solComment          start=/\/\// end=/$/
+      \ contains=solTodo,solCommentNumber,solCommentLiteral,@Spell
+      \ keepend
+syn region    solComment          start=/\/\*/ end=/\*\//
+      \ contains=solTodo,solCommentNumber,solCommentLiteral,@Spell
+      \ keepend
 
 hi def link   solTodo             Todo
+hi def link   solCommentNumber    Number
+hi def link   solCommentLiteral   String
 hi def link   solComment          Comment
 
 " Natspec
@@ -424,8 +445,12 @@ syn match     solNatspecParam     /\%(@param\s\+\)\@<=[a-zA-Z_][0-9a-zA-Z_]*/
 syn match     solNatspecTag       /@return\>/ contained
 syn match     solNatspecTag       /@inheritdoc\>/ contained
 syn match     solNatspecTag       /@custom:\k*\>/ contained
-syn region    solNatspecBlock     start=/\/\/\// end=/$/ contains=solTodo,solNatspecTag,solNatspecParam,@Spell
-syn region    solNatspecBlock     start=/\/\*\{2}/ end=/\*\// contains=solTodo,solNatspecTag,solNatspecParam,@Spell
+syn region    solNatspecBlock     start=/\/\/\// end=/$/
+      \ contains=solTodo,solNatspecTag,solNatspecParam,solCommentNumber,solCommentLiteral,@Spell
+      \ keepend
+syn region    solNatspecBlock     start=/\/\*\{2}/ end=/\*\//
+      \ contains=solTodo,solNatspecTag,solNatspecParam,solCommentNumber,solCommentLiteral,@Spell
+      \ keepend
 
 hi def link   solNatspecTag       SpecialComment
 hi def link   solNatspecBlock     Comment
