@@ -407,7 +407,7 @@ hi def link solUnchecked          Keyword
 
 
 " Comments
-syn keyword   solTodo             TODO FIXME XXX TBD contained
+syn keyword   solTodo             TODO FIXME XXX TBD NOTE contained
 
 " Extra highlighting in the comments.
 " This should probably be configurable, but I like it, so the default is "on".
